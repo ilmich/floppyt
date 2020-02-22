@@ -32,9 +32,6 @@ public class NotFoundRequestHandler extends HttpRequestHandler {
 
 	private final static NotFoundRequestHandler instance = new NotFoundRequestHandler();
 
-	private NotFoundRequestHandler() {
-	}
-
 	public static final NotFoundRequestHandler getInstance() {
 		return instance;
 	}

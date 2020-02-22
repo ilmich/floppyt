@@ -29,10 +29,6 @@ public abstract class Metric {
 	
 	public Map<String, String> labels = null;
 	
-	public Metric() {
-		super();
-	}
-	
 	public Metric(Map<String, String> labels) {
 		super();
 		this.labels = labels;

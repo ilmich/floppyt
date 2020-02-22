@@ -58,10 +58,6 @@ public class PlainIOHandler implements IOHandler {
 
 	private Protocol protocol = null;
 
-	public PlainIOHandler() {
-		super();
-	}
-
 	public PlainIOHandler(Protocol protocol) {
 		super();
 		this.protocol = protocol;

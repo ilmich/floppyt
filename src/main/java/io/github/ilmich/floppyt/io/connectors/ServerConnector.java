@@ -54,10 +54,6 @@ public class ServerConnector extends Thread {
 	private IOHandler ioHandler;
 	private boolean isRunning = false;
 
-	public ServerConnector() {
-		super();
-	}
-
 	public ServerConnector(IOHandler ioHandler) {
 		super();
 		setIoHandler(ioHandler);

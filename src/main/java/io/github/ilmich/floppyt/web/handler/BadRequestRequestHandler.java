@@ -32,9 +32,6 @@ public class BadRequestRequestHandler extends HttpRequestHandler {
 
 	private final static BadRequestRequestHandler instance = new BadRequestRequestHandler();
 
-	private BadRequestRequestHandler() {
-	}
-
 	public static final BadRequestRequestHandler getInstance() {
 		return instance;
 	}

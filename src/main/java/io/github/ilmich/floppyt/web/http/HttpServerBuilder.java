@@ -34,11 +34,9 @@ public class HttpServerBuilder {
 
 	public HttpServerBuilder bindPlain(int port) {
 		PlainIOHandler hndl = new PlainIOHandler(protocol);
-		ServerConnector conn = new ServerConnector();
-		conn.bind(port);
-		conn.setIoHandler(hndl);
+		ServerConnector conn = new ServerConnector(hndl);
+		conn.bind(port);		
 		hndl.setConnector(conn);
-
 		instance.addConnector(conn);
 
 		return this;

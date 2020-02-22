@@ -32,9 +32,6 @@ public class HttpContinueRequestHandler extends HttpRequestHandler {
 
 	private final static HttpContinueRequestHandler instance = new HttpContinueRequestHandler();
 
-	private HttpContinueRequestHandler() {
-	}
-
 	public static final HttpContinueRequestHandler getInstance() {
 		return instance;
 	}
