@@ -32,7 +32,6 @@ import io.github.ilmich.floppyt.web.handler.BadRequestRequestHandler;
 import io.github.ilmich.floppyt.web.handler.HandlerFactory;
 import io.github.ilmich.floppyt.web.handler.HttpContinueRequestHandler;
 import io.github.ilmich.floppyt.web.handler.NotFoundRequestHandler;
-import io.github.ilmich.floppyt.web.handler.StaticContentHandler;
 
 public class HttpHandlerFactory implements HandlerFactory {
 
@@ -52,12 +51,7 @@ public class HttpHandlerFactory implements HandlerFactory {
 	 * pattern ( e.g. "([0-9]+)" )
 	 */
 	private Map<HttpRequestHandler, Pattern> patterns = new HashMap<HttpRequestHandler, Pattern>();
-
-	/**
-	 * The directory where static content (files) will be served from.
-	 */
-	private String staticContentDir;
-
+	
 	public HttpHandlerFactory() {
 		super();
 	}
@@ -86,20 +80,14 @@ public class HttpHandlerFactory implements HandlerFactory {
 	private HttpRequestHandler getHandler(String path) {
 
 		HttpRequestHandler rh = absoluteHandlers.get(path);
-		if (rh == null) {
-			rh = getCapturingHandler(path);
-			if (rh == null) {
-				rh = getStaticContentHandler(path);
-				if (rh != null) {
-					return rh;
-				}
-			} else {
-				return rh;				
-			}
-		} else {
+		if (rh != null) {
 			return rh;
 		}
-
+		rh = getCapturingHandler(path);
+		if (rh != null) {
+			return rh;
+		}
+		
 		return NotFoundRequestHandler.getInstance();
 	}
 
@@ -142,22 +130,6 @@ public class HttpHandlerFactory implements HandlerFactory {
 			}
 		}
 		return null;
-	}
-
-	protected HttpRequestHandler getStaticContentHandler(String path) {
-		if (staticContentDir == null || path.length() <= staticContentDir.length()) {
-			return null; // quick reject (no static dir or simple contradiction)
-		}
-
-		if (path.substring(1).startsWith(staticContentDir)) {
-			return StaticContentHandler.getInstance();
-		} else {
-			return null;
-		}
-	}
-
-	void setStaticContentDir(String scd) {
-		staticContentDir = scd;
 	}
 
 }
