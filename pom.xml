@@ -12,26 +12,19 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<encoding>UTF-8</encoding>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>11</release>
 				</configuration>
 			</plugin>
 		</plugins>
-		<extensions>
-			<!-- Enabling the use of SCP -->
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>2.4</version>
-			</extension>
-		</extensions>
+		<extensions></extensions>
 	</build>
 	<distributionManagement>
 		<repository>
 			<id>github</id>
 			<name>GitHub OWNER Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/ilmich</url>
+			<url>https://maven.pkg.github.com/ilmich/floppyt</url>
 		</repository>
 	</distributionManagement>
+	<dependencies>
+	</dependencies>
 </project>

@@ -23,6 +23,9 @@ SOFTWARE.
 */
 package io.github.ilmich.floppyt.web.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.ilmich.floppyt.metrics.Metric;
 import io.github.ilmich.floppyt.metrics.Metrics;
 import io.github.ilmich.floppyt.web.http.HttpRequest;
@@ -55,10 +58,11 @@ public class PrometheusHandler extends HttpRequestHandler {
 		sb.append(name);
 		if (c.labels != null && !c.labels.isEmpty()) {
 			sb.append("{");
+			List<String> ser = new ArrayList<String>();
 			for (String label : c.labels.keySet()) {
-				sb.append(label + "=\"" + c.labels.get(label) + "\",");
-			}
-			sb.append("}");
+				ser.add(label + "=\"" + c.labels.get(label));
+			}			
+			sb.append(String.join(",", ser) + "}");
 		}
 		return sb.append(" " + c.value()).toString();
 	}

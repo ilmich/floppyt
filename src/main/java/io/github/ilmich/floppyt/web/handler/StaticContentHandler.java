@@ -24,9 +24,6 @@ SOFTWARE.
 package io.github.ilmich.floppyt.web.handler;
 
 import java.io.File;
-import java.io.IOException;
-
-import javax.activation.MimetypesFileTypeMap;
 
 import io.github.ilmich.floppyt.util.DateUtil;
 import io.github.ilmich.floppyt.web.http.HttpException;
@@ -36,6 +33,7 @@ import io.github.ilmich.floppyt.web.http.HttpResponse;
 import io.github.ilmich.floppyt.web.http.Request;
 import io.github.ilmich.floppyt.web.http.Response;
 import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
+import io.github.ilmich.floppyt.web.http.protocol.MimeTypes;
 
 /**
  * A RequestHandler that serves static content (files) from a predefined
@@ -50,20 +48,10 @@ public class StaticContentHandler extends HttpRequestHandler {
 
 	private final static StaticContentHandler instance = new StaticContentHandler();
 
-	private MimetypesFileTypeMap mimeTypeMap;
-
 	public static StaticContentHandler getInstance() {
 		return instance;
 	}
-
-	private StaticContentHandler() {
-		try {
-			mimeTypeMap = new MimetypesFileTypeMap("META-INF/mime.types");
-		} catch (IOException e) {
-			mimeTypeMap = new MimetypesFileTypeMap();
-		}
-	}
-
+	
 	/** {inheritDoc} */
 	@Override
 	public void get(HttpRequest request, HttpResponse response) {
@@ -96,7 +84,7 @@ public class StaticContentHandler extends HttpRequestHandler {
 		final long lastModified = file.lastModified();
 		response.setHeader("Last-Modified", DateUtil.parseToRFC1123(lastModified));
 		response.setHeader("Cache-Control", "public");
-		String mimeType = mimeTypeMap.getContentType(file);
+		String mimeType = MimeTypes.getContentType(file);
 		if ("text/plain".equals(mimeType)) {
 			mimeType += "; charset=utf-8";
 		}

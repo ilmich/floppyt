@@ -23,6 +23,10 @@ SOFTWARE.
 */
 package io.github.ilmich.floppyt.web.http.protocol;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A collection of known content types, for convenience.
  */
@@ -51,4 +55,17 @@ public class MimeTypes {
 
 	/** text/xml */
 	public static final String TEXT_XML = "text/xml";
+	
+	private static final Map<String, String> mime = new HashMap<String, String>();
+	
+	static {
+		mime.put(".html", TEXT_HTML);
+		mime.put(".xml", TEXT_XML);
+		mime.put(".json", APPLICATION_JSON);
+	}
+	
+	public static String getContentType(File file) {
+		String extension = file.getName().substring(file.getName().lastIndexOf('.'));
+		return mime.containsKey(extension) ? mime.get(extension) : TEXT_PLAIN;
+	}
 }
