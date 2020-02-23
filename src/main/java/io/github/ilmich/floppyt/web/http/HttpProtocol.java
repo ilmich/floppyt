@@ -81,53 +81,8 @@ public class HttpProtocol extends Protocol {
 		HttpRequestHandler rh = (HttpRequestHandler) factory.getHandler(request);
 		
 		if (rh != null) {
-			HttpVerb method = request.getMethod();
-			try {
-				switch (method) {
-				case GET:
-					rh.get((HttpRequest)request, response);
-					break;
-				case POST:
-					rh.post((HttpRequest)request, response);
-					break;
-				case HEAD:
-					rh.head((HttpRequest)request, response);
-					break;
-				case PUT:
-					rh.put((HttpRequest)request, response);
-					break;
-				case PATCH:
-					rh.patch((HttpRequest)request, response);
-					break;
-				case DELETE:
-					rh.delete((HttpRequest)request, response);
-					break;
-				case OPTIONS:
-					rh.option((HttpRequest)request, response);
-					break;
-				case TRACE:
-				case CONNECT:
-				default:
-					Log.warn(TAG, "Unimplemented Http metod received: " + method);
-					response.reset();
-					response.setStatus(HttpStatus.CLIENT_ERROR_METHOD_NOT_ALLOWED);
-				}
-			} catch (HttpException he) {
-				response.reset();
-				response.setStatus(he.getStatus());
-				Log.error(TAG, ExceptionUtils.getStackTrace(he));
-				Log.error(TAG, request.toString());
-				response.write(ExceptionUtils.getStackTrace(he));
-			} catch (Exception ex) {
-				response.reset();
-				response.setStatus(HttpStatus.SERVER_ERROR_INTERNAL_SERVER_ERROR);
-				Log.error(TAG, ExceptionUtils.getStackTrace(ex));
-				Log.error(TAG, request.toString());
-				response.write(ExceptionUtils.getStackTrace(ex));
-			}
-		} else {
-			
-		}
+			rh.handle((HttpRequest) request, response);
+		} 
 		
 		Map<String, String> labels = new HashMap<String, String>();
 		labels.put("method", request.getMethod().toString());
