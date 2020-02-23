@@ -70,6 +70,7 @@ public class HttpProtocol extends Protocol {
 			partials.remove(client);
 		}
 		if (request.expectContinue() || request.isFinished()) {
+			request.setRemoteHost(client.socket().getInetAddress());
 			return request;
 		}
 		return null;
@@ -134,8 +135,10 @@ public class HttpProtocol extends Protocol {
 		Counter ct = Metrics.getCounter("http_request_total", labels);
 		ct.increment();
 		
-		Log.info(TAG, request.getRequestLine() + " " + response.getStatus().code());
-		response.setHeader("Server", "Floppyt/0.5.0");
+		Log.info(TAG, request.getRemoteHost() + " " + request.getRequestLine() + " " + 
+				response.getStatus().code() + " " + response.getResponseData().position());
+		
+		response.setHeader("Server", HttpServer.SERVER_VERSION);
 		response.prepare();
 		return response;
 	}

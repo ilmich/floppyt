@@ -28,15 +28,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import io.github.ilmich.floppyt.util.HttpUtil;
-import io.github.ilmich.floppyt.web.handler.BadRequestRequestHandler;
 import io.github.ilmich.floppyt.web.handler.HandlerFactory;
-import io.github.ilmich.floppyt.web.handler.HttpContinueRequestHandler;
-import io.github.ilmich.floppyt.web.handler.NotFoundRequestHandler;
+import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
 
 public class HttpHandlerFactory implements HandlerFactory {
 
 	/**
-	 * "Normal/Absolute" (non group capturing) RequestHandlers e.g. "/", "/persons"
+	 * "Normal/Absolute" (non group capturing) HttpRequestHandlers e.g. "/", "/persons"
 	 */
 	private Map<String, HttpRequestHandler> absoluteHandlers = new HashMap<String, HttpRequestHandler>();
 
@@ -47,16 +45,56 @@ public class HttpHandlerFactory implements HandlerFactory {
 	private Map<String, HttpRequestHandler> capturingHandlers = new HashMap<String, HttpRequestHandler>();
 
 	/**
-	 * A mapping between group capturing RequestHandlers and their corresponding
+	 * A mapping between group capturing HttpRequestHandlers and their corresponding
 	 * pattern ( e.g. "([0-9]+)" )
 	 */
 	private Map<HttpRequestHandler, Pattern> patterns = new HashMap<HttpRequestHandler, Pattern>();
+	
+	private HttpRequestHandler notFoundHandler = new HttpRequestHandler() {
+
+		@Override
+		public void handle(HttpRequest request, HttpResponse response) {
+			response.setStatus(HttpStatus.CLIENT_ERROR_NOT_FOUND);			
+			response.write("Requested URL: " + request.getRequestedPath() + " was not found");
+		}
+		
+	};
+	
+	private HttpRequestHandler badRequestHandler = new HttpRequestHandler() {
+
+		@Override
+		public void handle(HttpRequest request, HttpResponse response) {
+			response.setStatus(HttpStatus.CLIENT_ERROR_BAD_REQUEST);
+			response.setHeader("Connection", "close");
+			response.write("Requested URL: " + request.getRequestedPath() + " was not found");
+		}
+		
+	};
+	
+	private HttpRequestHandler httpContinueHandler = new HttpRequestHandler() {
+
+		@Override
+		public void post(HttpRequest request, HttpResponse response) {
+			response.setStatus(HttpStatus.SUCCESS_CONTINUE);
+		}
+
+		@Override
+		public void put(HttpRequest request, HttpResponse response) {
+			response.setStatus(HttpStatus.SUCCESS_CONTINUE);
+		}
+
+		@Override
+		public void patch(HttpRequest request, HttpResponse response) {
+			response.setStatus(HttpStatus.SUCCESS_CONTINUE);
+		}
+		
+	}; 
 	
 	public HttpHandlerFactory() {
 		super();
 	}
 
-	public HttpHandlerFactory addRoute(String path, HttpRequestHandler handler) {
+	public HttpHandlerFactory route(String path, HttpRequestHandler handler) {
 		int index = path.lastIndexOf("/");
 		String group = path.substring(index + 1, path.length());
 		if (containsCapturingGroup(group)) {
@@ -74,8 +112,8 @@ public class HttpHandlerFactory implements HandlerFactory {
 	/**
 	 * 
 	 * @param path Requested path
-	 * @return Returns the {@link RequestHandler} associated with the given path. If
-	 *         no mapping exists a {@link NotFoundRequestHandler} is returned.
+	 * @return Returns the {@link HttpRequestHandlers} associated with the given path. If
+	 *         no mapping exists a notFoundRequestHandler is returned.
 	 */
 	private HttpRequestHandler getHandler(String path) {
 
@@ -88,21 +126,21 @@ public class HttpHandlerFactory implements HandlerFactory {
 			return rh;
 		}
 		
-		return NotFoundRequestHandler.getInstance();
+		return notFoundHandler;
 	}
 
 	public HttpRequestHandler getHandler(Request request) {
 
 		if (!HttpUtil.verifyRequest(request)) {
-			return BadRequestRequestHandler.getInstance();
+			return badRequestHandler;
 		}
 		HttpRequestHandler rh = getHandler(request.getRequestedPath());
 		if (rh == null) {
-			return NotFoundRequestHandler.getInstance();
+			return notFoundHandler;
 		}
 
 		if (request.expectContinue()) {
-			return HttpContinueRequestHandler.getInstance();
+			return httpContinueHandler;
 		}
 
 		return rh;

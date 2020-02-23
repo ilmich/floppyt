@@ -27,46 +27,39 @@ import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
 
 public abstract class HttpRequestHandler {
 
-	public HttpRequestHandler() {
-		
-	}
-
 	public String getCurrentUser(Request request) {
 		return null;
 	}
 
-	// Default implementation of HttpMethods return a 501 page
 	public void get(HttpRequest request, HttpResponse response) {
-		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
-		response.write(" ");
+		handle(request, response);
 	}
 
 	public void post(HttpRequest request, HttpResponse response) {
-		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
-		response.write(" ");
+		handle(request, response);
 	}
 
 	public void put(HttpRequest request, HttpResponse response) {
-		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
-		response.write(" ");
+		handle(request, response);
 	}
 
 	public void delete(HttpRequest request, HttpResponse response) {
-		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
-		response.write(" ");
+		handle(request, response);
 	}
 
 	public void head(HttpRequest request, HttpResponse response) {
-		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
-		response.write(" ");
+		handle(request, response);
 	}
 
 	public void option(HttpRequest request, HttpResponse response) {
-		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
-		response.write(" ");
+		handle(request, response);
 	}
 
 	public void patch(HttpRequest request, HttpResponse response) {
+		handle(request, response);
+	}
+	
+	public void handle(HttpRequest request, HttpResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write(" ");
 	}

@@ -31,6 +31,6 @@ public interface HandlerFactory {
 
 	public HttpRequestHandler getHandler(Request request);
 
-	public HttpHandlerFactory addRoute(String path, HttpRequestHandler handler);
+	public HttpHandlerFactory route(String path, HttpRequestHandler handler);
 
 }
