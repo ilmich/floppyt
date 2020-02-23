@@ -66,7 +66,7 @@ public class HttpHandlerFactory implements HandlerFactory {
 		public void handle(HttpRequest request, HttpResponse response) {
 			response.setStatus(HttpStatus.CLIENT_ERROR_BAD_REQUEST);
 			response.setHeader("Connection", "close");
-			response.write("Requested URL: " + request.getRequestedPath() + " was not found");
+			response.write("Bad Request");
 		}
 		
 	};

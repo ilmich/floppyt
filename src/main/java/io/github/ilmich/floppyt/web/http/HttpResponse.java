@@ -186,11 +186,9 @@ public class HttpResponse implements Response {
 	}
 
 	private void setEtagAndContentLength() {
-		if (responseData.position() > 0) {
-			if (createETag) {
-				setHeader("Etag", HttpUtil.getEtag(responseData.array()));
-			}
-			setHeader("Content-Length", String.valueOf(responseData.position()));
+		setHeader("Content-Length", String.valueOf(responseData.position()));
+		if (responseData.position() > 0 && createETag) {
+			setHeader("Etag", HttpUtil.getEtag(responseData.array()));						
 		}
 	}
 
