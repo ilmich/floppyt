@@ -192,5 +192,7 @@ public interface Request {
 	public boolean expectContinue();
 
 	public Map<String, Object> getRequestContext();
+	
+	public String getUserAgent();
 
 }

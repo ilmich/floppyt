@@ -430,4 +430,8 @@ public class HttpRequest implements Request {
 	public Map<String, Object> getRequestContext() {
 		return ctx;
 	}
+	
+	public String getUserAgent() {
+		return headers.get("user-agent");
+	}
 }

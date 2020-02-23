@@ -135,8 +135,8 @@ public class HttpProtocol extends Protocol {
 		Counter ct = Metrics.getCounter("http_request_total", labels);
 		ct.increment();
 		
-		Log.info(TAG, request.getRemoteHost() + " " + request.getRequestLine() + " " + 
-				response.getStatus().code() + " " + response.getResponseData().position());
+		Log.info(TAG, request.getRemoteHost() + " \"" + request.getRequestLine() + "\" " +
+				response.getStatus().code() + " " + response.getResponseData().position() + " \"" + request.getUserAgent() + "\"");
 		
 		response.setHeader("Server", HttpServer.SERVER_VERSION);
 		response.prepare();
