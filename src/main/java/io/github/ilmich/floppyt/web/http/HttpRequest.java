@@ -48,6 +48,7 @@ public class HttpRequest implements Request {
 	private String requestedPath; // correct name?
 	private String version;
 	private Map<String, String> headers;
+	private Map<String, String> pathParams;
 	private Map<String, Collection<String>> parameters;
 	private String body;
 	private boolean keepAlive;
@@ -76,6 +77,7 @@ public class HttpRequest implements Request {
 
 	public HttpRequest() {
 		headers = new HashMap<String, String>();
+		pathParams = new HashMap<>();
 	}
 
 	/**
@@ -433,5 +435,13 @@ public class HttpRequest implements Request {
 	
 	public String getUserAgent() {
 		return headers.get("user-agent");
+	}
+	
+	public void setPathParams(Map<String, String> params) {
+		pathParams = params;
+	}
+	
+	public String getPathParam(String key) {
+		return pathParams.get(key);
 	}
 }

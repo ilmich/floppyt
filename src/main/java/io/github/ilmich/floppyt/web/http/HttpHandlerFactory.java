@@ -23,8 +23,11 @@ SOFTWARE.
 */
 package io.github.ilmich.floppyt.web.http;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.ilmich.floppyt.util.HttpUtil;
@@ -38,17 +41,11 @@ public class HttpHandlerFactory implements HandlerFactory {
 	 */
 	private Map<String, HttpRequestHandler> absoluteHandlers = new HashMap<String, HttpRequestHandler>();
 
-	/**
-	 * Group capturing RequestHandlers e.g. "/persons/([0-9]+)",
-	 * "/persons/(\\d{1,3})"
-	 */
-	private Map<String, HttpRequestHandler> capturingHandlers = new HashMap<String, HttpRequestHandler>();
+	private Map<Pattern, HttpRequestHandler> capturingHandlers = new HashMap<Pattern, HttpRequestHandler>();
 
-	/**
-	 * A mapping between group capturing HttpRequestHandlers and their corresponding
-	 * pattern ( e.g. "([0-9]+)" )
-	 */
-	private Map<HttpRequestHandler, Pattern> patterns = new HashMap<HttpRequestHandler, Pattern>();
+	private Map<Pattern, List<String>> patterns = new HashMap<Pattern, List<String>>();
+	
+	private Pattern pathParamPattern = Pattern.compile("\\{(.*?)\\}");
 	
 	private HttpRequestHandler notFoundHandler = new HttpRequestHandler() {
 
@@ -95,38 +92,27 @@ public class HttpHandlerFactory implements HandlerFactory {
 	}
 
 	public HttpHandlerFactory route(String path, HttpRequestHandler handler) {
-		int index = path.lastIndexOf("/");
-		String group = path.substring(index + 1, path.length());
-		if (containsCapturingGroup(group)) {
-			// path ends with capturing group, e.g path ==
-			// "/person/([0-9]+)"
-			capturingHandlers.put(path.substring(0, index + 1), handler);
-			patterns.put(handler, Pattern.compile(group));
-		} else {
-			// "normal" path, e.g. path == "/"
+		StringBuilder sb = new StringBuilder();
+		Matcher mt = pathParamPattern.matcher(path);
+		int start = 0;
+		List<String> capturing = new ArrayList<String>();
+		while (mt.find()) {
+			sb.append(path.substring(start, mt.start()));
+			start = mt.end();
+			sb.append("(?<" + mt.group(1) + ">.*?)");
+			capturing.add(mt.group(1));
+		}
+		sb.append(path.substring(start, path.length()));
+		
+		if (capturing.isEmpty()) {
 			absoluteHandlers.put(path, handler);
-		}
-		return this;
-	}
-
-	/**
-	 * 
-	 * @param path Requested path
-	 * @return Returns the {@link HttpRequestHandlers} associated with the given path. If
-	 *         no mapping exists a notFoundRequestHandler is returned.
-	 */
-	private HttpRequestHandler getHandler(String path) {
-
-		HttpRequestHandler rh = absoluteHandlers.get(path);
-		if (rh != null) {
-			return rh;
-		}
-		rh = getCapturingHandler(path);
-		if (rh != null) {
-			return rh;
+		} else {
+			Pattern pt = Pattern.compile(sb.toString());
+			capturingHandlers.put(pt, handler);
+			patterns.put(pt, capturing);
 		}
 		
-		return notFoundHandler;
+		return this;
 	}
 
 	public HttpRequestHandler getHandler(Request request) {
@@ -134,40 +120,28 @@ public class HttpHandlerFactory implements HandlerFactory {
 		if (!HttpUtil.verifyRequest(request)) {
 			return badRequestHandler;
 		}
-		HttpRequestHandler rh = getHandler(request.getRequestedPath());
+		
+		HttpRequestHandler rh = absoluteHandlers.get(request.getRequestedPath());
 		if (rh == null) {
-			return notFoundHandler;
+			for (Pattern pt : capturingHandlers.keySet()) {
+				Matcher mt = pt.matcher(request.getRequestedPath());
+				if (mt.matches()) {
+					Map<String, String> parem = new HashMap<String, String>();
+					for (String par : patterns.get(pt)) {			
+						parem.put(par, mt.group(par));								
+					}
+					((HttpRequest) request).setPathParams(parem);
+					rh = capturingHandlers.get(pt);
+				}
+			}
 		}
+		if (rh == null) 
+			return notFoundHandler;
 
 		if (request.expectContinue()) {
 			return httpContinueHandler;
 		}
-
 		return rh;
-	}
-
-	private static boolean containsCapturingGroup(String group) {
-		boolean containsGroup = group.matches("^\\(.*\\)$");
-		Pattern.compile(group); // throws PatternSyntaxException if group is
-		// malformed regular expression
-		return containsGroup;
-	}
-
-	private HttpRequestHandler getCapturingHandler(String path) {
-		int index = path.lastIndexOf("/");
-		if (index != -1) {
-			String init = path.substring(0, index + 1); // path without its last
-			// segment
-			String group = path.substring(index + 1, path.length());
-			HttpRequestHandler handler = capturingHandlers.get(init);
-			if (handler != null) {
-				Pattern regex = patterns.get(handler);
-				if (regex.matcher(group).matches()) {
-					return handler;
-				}
-			}
-		}
-		return null;
 	}
 
 }
