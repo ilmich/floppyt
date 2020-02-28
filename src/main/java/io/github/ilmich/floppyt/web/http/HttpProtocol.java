@@ -32,11 +32,7 @@ import java.util.Map;
 import io.github.ilmich.floppyt.io.Protocol;
 import io.github.ilmich.floppyt.metrics.Counter;
 import io.github.ilmich.floppyt.metrics.Metrics;
-import io.github.ilmich.floppyt.util.ExceptionUtils;
 import io.github.ilmich.floppyt.util.Log;
-import io.github.ilmich.floppyt.web.handler.HandlerFactory;
-import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
-import io.github.ilmich.floppyt.web.http.protocol.HttpVerb;
 
 public class HttpProtocol extends Protocol {
 
@@ -51,13 +47,13 @@ public class HttpProtocol extends Protocol {
 	 */
 	private HttpRequestParser parser = new HttpRequestParser();
 
-	private HandlerFactory factory = null;
+	private HttpHandlerFactory factory = null;
 
 	public HttpProtocol() {
 		super();		
 	}
 
-	public HttpProtocol(HandlerFactory factory) {
+	public HttpProtocol(HttpHandlerFactory factory) {
 		super();
 		this.factory = factory;		
 	}
@@ -98,11 +94,11 @@ public class HttpProtocol extends Protocol {
 		return response;
 	}
 
-	public HandlerFactory getFactory() {
+	public HttpHandlerFactory getFactory() {
 		return factory;
 	}
 
-	public void setFactory(HandlerFactory factory) {
+	public void setFactory(HttpHandlerFactory factory) {
 		this.factory = factory;
 	}
 }

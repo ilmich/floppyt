@@ -31,11 +31,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.ilmich.floppyt.util.HttpUtil;
-import io.github.ilmich.floppyt.web.handler.HandlerFactory;
+import io.github.ilmich.floppyt.util.Log;
 import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
 
-public class HttpHandlerFactory implements HandlerFactory {
+public class HttpHandlerFactory {
 
+	private static final String TAG = "HttpHandlerFactory";
 	/**
 	 * "Normal/Absolute" (non group capturing) HttpRequestHandlers e.g. "/", "/persons"
 	 */
@@ -92,6 +93,7 @@ public class HttpHandlerFactory implements HandlerFactory {
 	}
 
 	public HttpHandlerFactory route(String path, HttpRequestHandler handler) {
+		Log.trace(TAG, "Adding route \"" + path + "\"");
 		StringBuilder sb = new StringBuilder();
 		Matcher mt = pathParamPattern.matcher(path);
 		int start = 0;
@@ -106,10 +108,12 @@ public class HttpHandlerFactory implements HandlerFactory {
 		
 		if (capturing.isEmpty()) {
 			absoluteHandlers.put(path, handler);
+			Log.trace(TAG, "Absolute route \"" + path + "\" added");
 		} else {
 			Pattern pt = Pattern.compile(sb.toString());
 			capturingHandlers.put(pt, handler);
 			patterns.put(pt, capturing);
+			Log.trace(TAG, "Capturing group route \"" +  sb.toString() + "\" added");
 		}
 		
 		return this;

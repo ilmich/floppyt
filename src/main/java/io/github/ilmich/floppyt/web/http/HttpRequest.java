@@ -437,6 +437,29 @@ public class HttpRequest implements Request {
 		return headers.get("user-agent");
 	}
 	
+	public String getHttpAuthHeader() {
+		return headers.get("authorization");
+	}
+	
+	public String getHttpAuthType() {
+		if (headers.containsKey("authorization")) {
+			String[] split = headers.get("authorization").split(" ");
+			return split[0];
+		}
+		
+		return null;
+	}
+	
+	public String getHttpAuthToken() {
+		if (headers.containsKey("authorization")) {
+			String[] split = headers.get("authorization").split(" ");
+			if (split.length > 1)
+				return split[1];
+		}
+		
+		return null;
+	}
+	
 	public void setPathParams(Map<String, String> params) {
 		pathParams = params;
 	}

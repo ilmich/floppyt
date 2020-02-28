@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import io.github.ilmich.floppyt.web.AsyncCallback;
 
-public class JMXCallbackManager implements CallbackManager {
+public class JMXCallbackManager {
 
 	private final AbstractCollection<AsyncCallback> callbacks = new ConcurrentLinkedQueue<AsyncCallback>();
 
@@ -38,12 +38,10 @@ public class JMXCallbackManager implements CallbackManager {
 		return callbacks.size();
 	}
 
-	@Override
 	public void addCallback(AsyncCallback callback) {
 		callbacks.add(callback);
 	}
 
-	@Override
 	public boolean execute() {
 		// makes a defensive copy to avoid (1) CME (new callbacks are added this
 		// iteration) and (2) IO starvation.

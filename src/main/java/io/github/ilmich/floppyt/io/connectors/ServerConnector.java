@@ -34,7 +34,6 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
 import io.github.ilmich.floppyt.io.IOHandler;
-import io.github.ilmich.floppyt.io.callback.CallbackManager;
 import io.github.ilmich.floppyt.io.callback.JMXCallbackManager;
 import io.github.ilmich.floppyt.io.timeout.JMXTimeoutManager;
 import io.github.ilmich.floppyt.io.timeout.Timeout;
@@ -49,7 +48,7 @@ public class ServerConnector extends Thread {
 	// private int port;
 	private ServerSocketChannel serverChannel;
 	private Selector selector;
-	private final CallbackManager cm = new JMXCallbackManager();
+	private final JMXCallbackManager cm = new JMXCallbackManager();
 	private final JMXTimeoutManager tm = new JMXTimeoutManager();
 	private IOHandler ioHandler;
 	private boolean isRunning = false;

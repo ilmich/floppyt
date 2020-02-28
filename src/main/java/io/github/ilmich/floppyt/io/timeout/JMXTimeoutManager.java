@@ -34,15 +34,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.github.ilmich.floppyt.util.Log;
 import io.github.ilmich.floppyt.web.AsyncCallback;
 
-public class JMXTimeoutManager implements TimeoutManager {
+public class JMXTimeoutManager {
 
 	private static final String TAG = "JMXTimeoutManager";
 	private final TreeSet<Timeout> timeouts = new TreeSet<Timeout>(new TimeoutComparator());
 	private final TreeSet<DecoratedTimeout> keepAliveTimeouts = new TreeSet<JMXTimeoutManager.DecoratedTimeout>();
 	private final Map<SelectableChannel, DecoratedTimeout> index = new ConcurrentHashMap<SelectableChannel, JMXTimeoutManager.DecoratedTimeout>();
 
-	@Override
 	public void addKeepAliveTimeout(SelectableChannel channel, Timeout timeout) {
+		Log.trace(TAG, "Adding keepalivetimeout");
 		DecoratedTimeout decorated = index.get(channel);
 		if (decorated == null) {
 			decorated = new DecoratedTimeout(channel, timeout);
@@ -62,17 +62,14 @@ public class JMXTimeoutManager implements TimeoutManager {
 		index.remove(channel);
 	}
 
-	@Override
 	public void addTimeout(Timeout timeout) {
 		timeouts.add(timeout);
 	}
 
-	@Override
 	public boolean hasKeepAliveTimeout(SelectableChannel channel) {
 		return index.containsKey(channel);
 	}
 
-	@Override
 	public long execute() {
 		return Math.min(executeKeepAliveTimeouts(), executeTimeouts());
 	}
