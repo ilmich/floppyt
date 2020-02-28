@@ -48,4 +48,5 @@ public class Gauge extends Counter {
 	public String getType() {		
 		return "gauge";
 	}
+	
 }

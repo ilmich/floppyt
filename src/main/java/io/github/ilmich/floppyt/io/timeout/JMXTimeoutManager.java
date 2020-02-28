@@ -42,7 +42,6 @@ public class JMXTimeoutManager {
 	private final Map<SelectableChannel, DecoratedTimeout> index = new ConcurrentHashMap<SelectableChannel, JMXTimeoutManager.DecoratedTimeout>();
 
 	public void addKeepAliveTimeout(SelectableChannel channel, Timeout timeout) {
-		Log.trace(TAG, "Adding keepalivetimeout");
 		DecoratedTimeout decorated = index.get(channel);
 		if (decorated == null) {
 			decorated = new DecoratedTimeout(channel, timeout);

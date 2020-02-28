@@ -53,7 +53,7 @@ public class PlainIOHandler implements IOHandler {
 	private ExecutorService executor = new ThreadPoolExecutor(HttpServerDescriptor.MIN_THREADS_PROCESSOR,
 			HttpServerDescriptor.MAX_THREADS_PROCESSOR, HttpServerDescriptor.KEEP_ALIVE_TIMEOUT, TimeUnit.SECONDS,
 			new SynchronousQueue<Runnable>());
-
+	
 	private ServerConnector connector = null;
 
 	private Protocol protocol = null;
@@ -75,9 +75,19 @@ public class PlainIOHandler implements IOHandler {
 				clientChannel.configureBlocking(false);
 				Gauge c = Metrics.getGauge("http_connections");
 				c.increment();
+				
 				// register channel for reading
 				connector.registerChannel(clientChannel, SelectionKey.OP_READ);
 			}
+			//set keepalive timeout for all incoming connections 
+			//(not only valid http requests)
+			//I've noticed that chrome (and maybe others) try to
+			//establish almost two persistent connections
+			//with scheduled empty packet every 1 minute
+			//(maybe for faster http interactions) 
+			
+			//commented out for now 
+			//connector.prolongKeepAliveTimeout(clientChannel);
 		} catch (IOException ex) {
 			Log.error(TAG, "Error accepting connection: " + ex.getMessage());
 		}
@@ -93,8 +103,10 @@ public class PlainIOHandler implements IOHandler {
 		final SocketChannel client = (SocketChannel) key.channel();
 		final ByteBuffer readBuffer = ByteBuffer.allocate(HttpServerDescriptor.READ_BUFFER_SIZE);
 		try {
-			if (IOSocketHelper.readBuffer(readBuffer, client) < 0) { // client close connection
-				throw new ClosedChannelException();
+			if (IOSocketHelper.readBuffer(readBuffer, client) < 0) {
+				//ignore empty requests
+				key.cancel();
+				return;
 			}
 
 			if (connector.hasKeepAliveTimeout(client)) { // prolong keep-alive timeout
@@ -219,7 +231,7 @@ public class PlainIOHandler implements IOHandler {
 	}
 
 	@Override
-	public void handleDisconnect(SocketChannel key) {
+	public void handleDisconnect(SocketChannel key) {		
 		Gauge c = Metrics.getGauge("http_connections");
 		c.decrement();
 	}

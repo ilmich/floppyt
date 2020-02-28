@@ -24,7 +24,6 @@ SOFTWARE.
 package io.github.ilmich.floppyt.metrics;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,7 +49,8 @@ public class Metrics {
 		
 		cc = counters.get(intMetric);
 		for (Counter counter : cc) {
-			if (counter.labels.equals(labels)) {
+			if ((labels == null && counter.labels == null) 
+					|| counter.labels.equals(labels)) {
 				return counter;
 			} 
 		}
@@ -67,16 +67,17 @@ public class Metrics {
 	public static Gauge getGauge(String name, Map<String, String> labels) {
 		String intMetric = name;
 		List<Gauge> cc = new ArrayList<Gauge>();
-		if (!counters.containsKey(intMetric)) {			
+		if (!gauges.containsKey(intMetric)) {			
 			Gauge c = new Gauge(labels);
 			cc.add(c);
 			gauges.put(intMetric, cc);
 			return c;
 		}
 		
-		cc = gauges.get(intMetric);
-		for (Gauge counter : cc) {
-			if (counter.labels.equals(labels)) {
+		cc = gauges.get(intMetric);		
+		for (Gauge counter : cc) {			
+			if ((labels == null && counter.labels == null) 
+					|| counter.labels.equals(labels)) {
 				return counter;
 			} 
 		}
