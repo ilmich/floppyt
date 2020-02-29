@@ -85,10 +85,13 @@ public class HttpProtocol extends Protocol {
 		labels.put("status", String.valueOf(response.getStatus().code()));
 		Counter ct = Metrics.getCounter("http_request_total", labels);
 		ct.increment();
-		
-		Log.info(TAG, request.getRemoteHost() + " \"" + request.getRequestLine() + "\" " +
+		if (response.getStatus().code() > 400) {
+			Log.error(TAG, request.getRemoteHost() + " \"" + request.getRequestLine() + "\" " +
+					response.getStatus().code() + " " + response.getResponseData().position() + " \"" + request.getUserAgent() + "\"");
+		} else {
+			Log.debug(TAG, request.getRemoteHost() + " \"" + request.getRequestLine() + "\" " +
 				response.getStatus().code() + " " + response.getResponseData().position() + " \"" + request.getUserAgent() + "\"");
-		
+		}
 		response.setHeader("Server", HttpServer.SERVER_VERSION);
 		response.prepare();
 		return response;

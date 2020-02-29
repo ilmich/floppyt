@@ -26,6 +26,8 @@ package io.github.ilmich.floppyt.web.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.ilmich.floppyt.io.PlainIOHandler;
+import io.github.ilmich.floppyt.io.connectors.ServerConnector;
 import io.github.ilmich.floppyt.metrics.Metric;
 import io.github.ilmich.floppyt.metrics.Metrics;
 import io.github.ilmich.floppyt.web.http.HttpRequest;
@@ -36,17 +38,28 @@ public class PrometheusHandler extends HttpRequestHandler {
 
 	@Override
 	public void get(HttpRequest request, HttpResponse response) {
+		
+		long stamp = System.currentTimeMillis();
+		response.write("# TYPE threads_active_count gauge\n");
+		response.write("threads_active_count "+ PlainIOHandler.executor.getActiveCount() + " " +stamp+ "\n");
+		
+		response.write("# TYPE threads_max_active_count gauge\n");
+		response.write("threads_max_active_count "+ PlainIOHandler.executor.getLargestPoolSize() + " " +stamp+ "\n");
+		
+		response.write("# TYPE http_keepalive_conn gauge\n");
+		response.write("http_keepalive_conn "+ ServerConnector.tm.getNumberOfKeepAliveTimeouts() + " " +stamp+ "\n");
+		
 		for (String name : Metrics.gauges.keySet()) {
 			response.write("# TYPE "+ name + " gauge\n");
 			for (Metric c : Metrics.gauges.get(name)) {
-				response.write(serializeMetric(name, c));
+				response.write(serializeMetric(name, c) + " " +stamp);
 				response.write("\n");
 			}
 		}
 		for (String name : Metrics.counters.keySet()) {
 			response.write("# TYPE "+ name + " counter\n");
 			for (Metric c : Metrics.counters.get(name)) {
-				response.write(serializeMetric(name, c));
+				response.write(serializeMetric(name, c)+ " " +stamp);
 				response.write("\n");
 			}
 		}

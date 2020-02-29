@@ -31,15 +31,12 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import io.github.ilmich.floppyt.io.connectors.ServerConnector;
-import io.github.ilmich.floppyt.metrics.Gauge;
-import io.github.ilmich.floppyt.metrics.Metrics;
 import io.github.ilmich.floppyt.util.ExceptionUtils;
 import io.github.ilmich.floppyt.util.Log;
 import io.github.ilmich.floppyt.web.http.HttpServerDescriptor;
@@ -50,21 +47,21 @@ public class PlainIOHandler implements IOHandler {
 	
 	private static final String TAG = "PlainIOHandler";
 
-	private ExecutorService executor = new ThreadPoolExecutor(HttpServerDescriptor.MIN_THREADS_PROCESSOR,
+	public static ThreadPoolExecutor executor = new ThreadPoolExecutor(HttpServerDescriptor.MIN_THREADS_PROCESSOR,
 			HttpServerDescriptor.MAX_THREADS_PROCESSOR, HttpServerDescriptor.KEEP_ALIVE_TIMEOUT, TimeUnit.SECONDS,
 			new SynchronousQueue<Runnable>());
 	
 	private ServerConnector connector = null;
 
 	private Protocol protocol = null;
-
+	
 	public PlainIOHandler(Protocol protocol) {
 		super();
-		this.protocol = protocol;
+		this.protocol = protocol;	
 	}
 
-	public void setExecutor(ExecutorService executor) {	
-		this.executor = executor;
+	public void setExecutor(ThreadPoolExecutor exec) {
+		executor = exec;
 	}
 
 	@Override
@@ -72,9 +69,7 @@ public class PlainIOHandler implements IOHandler {
 		try {
 			SocketChannel clientChannel = ((ServerSocketChannel) key.channel()).accept();
 			if (clientChannel.isOpen()) {
-				clientChannel.configureBlocking(false);
-				Gauge c = Metrics.getGauge("http_connections");
-				c.increment();
+				clientChannel.configureBlocking(false);	
 				
 				// register channel for reading
 				connector.registerChannel(clientChannel, SelectionKey.OP_READ);
@@ -115,10 +110,10 @@ public class PlainIOHandler implements IOHandler {
 
 			final Request req = protocol.onRead(readBuffer, client);
 			if (req != null) { // response completed
+				
 				final CompletableFuture<Response> future = new CompletableFuture<Response>();
 
 				executor.submit(new Runnable() {
-
 					@Override
 					public void run() {
 						try {
@@ -152,6 +147,7 @@ public class PlainIOHandler implements IOHandler {
 					}
 
 				});
+				
 			}
 
 		} catch (ClosedChannelException ex) {
@@ -231,8 +227,7 @@ public class PlainIOHandler implements IOHandler {
 	}
 
 	@Override
-	public void handleDisconnect(SocketChannel key) {		
-		Gauge c = Metrics.getGauge("http_connections");
-		c.decrement();
+	public void handleDisconnect(SocketChannel key) {
+		
 	}
 }

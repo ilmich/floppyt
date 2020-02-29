@@ -48,8 +48,8 @@ public class ServerConnector extends Thread {
 	// private int port;
 	private ServerSocketChannel serverChannel;
 	private Selector selector;
-	private final JMXCallbackManager cm = new JMXCallbackManager();
-	private final JMXTimeoutManager tm = new JMXTimeoutManager();
+	public static final JMXCallbackManager cm = new JMXCallbackManager();
+	public static final JMXTimeoutManager tm = new JMXTimeoutManager();
 	private IOHandler ioHandler;
 	private boolean isRunning = false;
 
@@ -174,10 +174,6 @@ public class ServerConnector extends Thread {
 		Closeables.closeQuietly(channel);
 	}
 
-	public void addKeepAliveTimeout(SelectableChannel channel, Timeout keepAliveTimeout) {
-		tm.addKeepAliveTimeout(channel, keepAliveTimeout);
-	}
-
 	public boolean hasKeepAliveTimeout(SelectableChannel channel) {
 		return tm.hasKeepAliveTimeout(channel);
 	}
@@ -187,7 +183,7 @@ public class ServerConnector extends Thread {
 	}
 
 	public void prolongKeepAliveTimeout(SelectableChannel channel) {
-		addKeepAliveTimeout(channel, Timeout.newKeepAliveTimeout(channel, HttpServerDescriptor.KEEP_ALIVE_TIMEOUT, this));
+		tm.addKeepAliveTimeout(channel, Timeout.newKeepAliveTimeout(channel, HttpServerDescriptor.KEEP_ALIVE_TIMEOUT, this));
 	}
 
 	public void closeOrRegisterForRead(SelectionKey key, boolean keepAlive) throws IOException {
