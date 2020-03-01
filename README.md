@@ -3,8 +3,6 @@ minimal java web toolkit that stay in a floppy
 
 # sample code
 ```
-
-
 import java.net.InetSocketAddress;
 
 import io.github.ilmich.floppyt.util.Log;
@@ -34,13 +32,36 @@ public class SampleServer {
 		.route("/user/{id}", new HttpRequestHandler() {
 			@Override
 			public void get(HttpRequest request, HttpResponse response) {
-				response.write(request.getPathParam("id"));				
+				response.write(request.getPathParam("id"));
 			}
 		}).startAndWait(); 
 		
 	}
 
 }
-
-
+```
+# Using
+```
+<project>
+...
+...
+<dependencies>
+    <dependency>
+	<groupId>io.github.ilmich</groupId>
+	<artifactId>floppyt</artifactId>
+	<version>0.6.0</version>
+    </dependency>
+</dependencies>
+...
+...
+<repositories>
+...
+...
+    <repository>
+      <id>ilmich-maven-repo</id>
+      <url>https://ilmich.github.io/mvn-repo/</url>
+    </repository>
+...
+...
+</repositories>
 ```
