@@ -41,7 +41,7 @@ public class HttpRequestParser {
 		lexer = new HttpBufferedLexer();
 	}
 
-	public HttpRequest parseRequestBuffer(ByteBuffer buffer) {
+	public HttpServerRequest parseRequestBuffer(ByteBuffer buffer) {
 		return parseRequestBuffer(buffer, null);
 	}
 
@@ -54,10 +54,10 @@ public class HttpRequestParser {
 	 * @return new HttpRequestImpl if result is null representing a complete or
 	 *         incomplete request on error, it will return a MalformedHttpRequest.
 	 */
-	public HttpRequest parseRequestBuffer(ByteBuffer buffer, HttpRequest result) {
+	public HttpServerRequest parseRequestBuffer(ByteBuffer buffer, HttpServerRequest result) {
 
 		if (result == null) {
-			result = new HttpRequest();
+			result = new HttpServerRequest();
 		}
 		int status = 1;
 		HttpParsingContext context = result.getContext();
@@ -144,7 +144,7 @@ public class HttpRequestParser {
 		return result;
 	}
 
-	private int pushChunkToBody(ByteBuffer buffer, HttpRequest result, HttpParsingContext context) {
+	private int pushChunkToBody(ByteBuffer buffer, HttpServerRequest result, HttpParsingContext context) {
 		int size = (buffer.remaining() > context.chunkSize ? context.chunkSize : buffer.remaining());
 		result.getBodyBuffer().put(buffer.array(), buffer.position(), size);
 		context.chunkSize = context.chunkSize - size;

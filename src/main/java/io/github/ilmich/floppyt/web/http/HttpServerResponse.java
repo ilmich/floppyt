@@ -41,7 +41,7 @@ import io.github.ilmich.floppyt.util.Log;
 import io.github.ilmich.floppyt.util.Strings;
 import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
 
-public class HttpResponse implements Response {
+public class HttpServerResponse implements Response {
 
 	private static final String TAG = "HttpResponse";
 
@@ -61,7 +61,7 @@ public class HttpResponse implements Response {
 		return responseData;
 	}
 
-	public HttpResponse(boolean keepAlive) {
+	public HttpServerResponse(boolean keepAlive) {
 		headers.put("Date", DateUtil.getCurrentAsString());
 		setKeepAlive(keepAlive);
 	}

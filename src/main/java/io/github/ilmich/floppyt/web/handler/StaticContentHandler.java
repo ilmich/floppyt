@@ -27,9 +27,9 @@ import java.io.File;
 
 import io.github.ilmich.floppyt.util.DateUtil;
 import io.github.ilmich.floppyt.web.http.HttpException;
-import io.github.ilmich.floppyt.web.http.HttpRequest;
+import io.github.ilmich.floppyt.web.http.HttpServerRequest;
 import io.github.ilmich.floppyt.web.http.HttpRequestHandler;
-import io.github.ilmich.floppyt.web.http.HttpResponse;
+import io.github.ilmich.floppyt.web.http.HttpServerResponse;
 import io.github.ilmich.floppyt.web.http.Request;
 import io.github.ilmich.floppyt.web.http.Response;
 import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
@@ -54,13 +54,13 @@ public class StaticContentHandler extends HttpRequestHandler {
 	
 	/** {inheritDoc} */
 	@Override
-	public void get(HttpRequest request, HttpResponse response) {
+	public void get(HttpServerRequest request, HttpServerResponse response) {
 		perform(request, response, true);
 	}
 
 	/** {inheritDoc} */
 	@Override
-	public void head(final HttpRequest request, final HttpResponse response) {
+	public void head(final HttpServerRequest request, final HttpServerResponse response) {
 		perform(request, response, false);
 	}
 

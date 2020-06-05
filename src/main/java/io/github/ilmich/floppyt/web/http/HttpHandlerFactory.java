@@ -51,7 +51,7 @@ public class HttpHandlerFactory {
 	private HttpRequestHandler notFoundHandler = new HttpRequestHandler() {
 
 		@Override
-		public void handle(HttpRequest request, HttpResponse response) {
+		public void handle(HttpServerRequest request, HttpServerResponse response) {
 			response.setStatus(HttpStatus.CLIENT_ERROR_NOT_FOUND);			
 			response.write("Requested URL: " + request.getRequestedPath() + " was not found");
 		}
@@ -61,7 +61,7 @@ public class HttpHandlerFactory {
 	private HttpRequestHandler badRequestHandler = new HttpRequestHandler() {
 
 		@Override
-		public void handle(HttpRequest request, HttpResponse response) {
+		public void handle(HttpServerRequest request, HttpServerResponse response) {
 			response.setStatus(HttpStatus.CLIENT_ERROR_BAD_REQUEST);
 			response.setHeader("Connection", "close");
 			response.write("Bad Request");
@@ -72,17 +72,17 @@ public class HttpHandlerFactory {
 	private HttpRequestHandler httpContinueHandler = new HttpRequestHandler() {
 
 		@Override
-		public void post(HttpRequest request, HttpResponse response) {
+		public void post(HttpServerRequest request, HttpServerResponse response) {
 			response.setStatus(HttpStatus.SUCCESS_CONTINUE);
 		}
 
 		@Override
-		public void put(HttpRequest request, HttpResponse response) {
+		public void put(HttpServerRequest request, HttpServerResponse response) {
 			response.setStatus(HttpStatus.SUCCESS_CONTINUE);
 		}
 
 		@Override
-		public void patch(HttpRequest request, HttpResponse response) {
+		public void patch(HttpServerRequest request, HttpServerResponse response) {
 			response.setStatus(HttpStatus.SUCCESS_CONTINUE);
 		}
 		
@@ -134,7 +134,7 @@ public class HttpHandlerFactory {
 					for (String par : patterns.get(pt)) {			
 						parem.put(par, mt.group(par));								
 					}
-					((HttpRequest) request).setPathParams(parem);
+					((HttpServerRequest) request).setPathParams(parem);
 					rh = capturingHandlers.get(pt);
 				}
 			}

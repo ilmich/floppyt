@@ -36,65 +36,65 @@ public abstract class HttpRequestHandler {
 		return null;
 	}
 
-	public void get(HttpRequest request, HttpResponse response) {
+	public void get(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 
-	public void post(HttpRequest request, HttpResponse response) {
+	public void post(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 
-	public void put(HttpRequest request, HttpResponse response) {
+	public void put(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 
-	public void delete(HttpRequest request, HttpResponse response) {
+	public void delete(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 
-	public void head(HttpRequest request, HttpResponse response) {
+	public void head(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 
-	public void option(HttpRequest request, HttpResponse response) {
+	public void option(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 
-	public void patch(HttpRequest request, HttpResponse response) {
+	public void patch(HttpServerRequest request, HttpServerResponse response) {
 		response.setStatus(HttpStatus.SERVER_ERROR_NOT_IMPLEMENTED);
 		response.write("Not implemented");
 	}
 	
-	public void handle(HttpRequest request, HttpResponse response) {		
+	public void handle(HttpServerRequest request, HttpServerResponse response) {		
 		HttpVerb method = request.getMethod();
 		try {
 			switch (method) {
 			case GET:
-				this.get((HttpRequest)request, response);
+				this.get((HttpServerRequest)request, response);
 				break;
 			case POST:
-				this.post((HttpRequest)request, response);
+				this.post((HttpServerRequest)request, response);
 				break;
 			case HEAD:
-				this.head((HttpRequest)request, response);
+				this.head((HttpServerRequest)request, response);
 				break;
 			case PUT:
-				this.put((HttpRequest)request, response);
+				this.put((HttpServerRequest)request, response);
 				break;
 			case PATCH:
-				this.patch((HttpRequest)request, response);
+				this.patch((HttpServerRequest)request, response);
 				break;
 			case DELETE:
-				this.delete((HttpRequest)request, response);
+				this.delete((HttpServerRequest)request, response);
 				break;
 			case OPTIONS:
-				this.option((HttpRequest)request, response);
+				this.option((HttpServerRequest)request, response);
 				break;
 			case TRACE:
 			case CONNECT:

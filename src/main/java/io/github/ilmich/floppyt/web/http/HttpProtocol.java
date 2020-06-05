@@ -40,7 +40,7 @@ public class HttpProtocol extends Protocol {
 	/**
 	 * a queue of half-baked (pending/unfinished) HTTP post request
 	 */
-	private final Map<SelectableChannel, HttpRequest> partials = new HashMap<SelectableChannel, HttpRequest>();
+	private final Map<SelectableChannel, HttpServerRequest> partials = new HashMap<SelectableChannel, HttpServerRequest>();
 
 	/**
 	 * Http request parser
@@ -59,7 +59,7 @@ public class HttpProtocol extends Protocol {
 	}
 
 	public Request onRead(final ByteBuffer buffer, SocketChannel client) {
-		HttpRequest request = parser.parseRequestBuffer(buffer, partials.get(client));
+		HttpServerRequest request = parser.parseRequestBuffer(buffer, partials.get(client));
 		if (!request.isFinished()) {
 			partials.put(client, request);
 		} else {
@@ -73,11 +73,11 @@ public class HttpProtocol extends Protocol {
 	}
 
 	public Response processRequest(final Request request) {		
-		HttpResponse response = new HttpResponse(request.isKeepAlive());
+		HttpServerResponse response = new HttpServerResponse(request.isKeepAlive());
 		HttpRequestHandler rh = (HttpRequestHandler) factory.getHandler(request);
 		
 		if (rh != null) {
-			rh.handle((HttpRequest) request, response);
+			rh.handle((HttpServerRequest) request, response);
 		} 
 		
 		Map<String, String> labels = new HashMap<String, String>();

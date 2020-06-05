@@ -25,7 +25,7 @@ package io.github.ilmich.floppyt.web.http;
 
 import java.util.HashMap;
 
-public class MalFormedHttpRequest extends HttpRequest {
+public class MalFormedHttpRequest extends HttpServerRequest {
 
 	public static final MalFormedHttpRequest instance = new MalFormedHttpRequest();
 

@@ -30,14 +30,14 @@ import io.github.ilmich.floppyt.io.PlainIOHandler;
 import io.github.ilmich.floppyt.io.connectors.ServerConnector;
 import io.github.ilmich.floppyt.metrics.Metric;
 import io.github.ilmich.floppyt.metrics.Metrics;
-import io.github.ilmich.floppyt.web.http.HttpRequest;
+import io.github.ilmich.floppyt.web.http.HttpServerRequest;
 import io.github.ilmich.floppyt.web.http.HttpRequestHandler;
-import io.github.ilmich.floppyt.web.http.HttpResponse;
+import io.github.ilmich.floppyt.web.http.HttpServerResponse;
 
 public class PrometheusHandler extends HttpRequestHandler {
 
 	@Override
-	public void get(HttpRequest request, HttpResponse response) {
+	public void get(HttpServerRequest request, HttpServerResponse response) {
 		
 		long stamp = System.currentTimeMillis();
 		response.write("# TYPE threads_active_count gauge\n");

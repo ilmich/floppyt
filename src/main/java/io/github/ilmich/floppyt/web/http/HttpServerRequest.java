@@ -41,7 +41,7 @@ import io.github.ilmich.floppyt.web.http.protocol.HttpVerb;
 /**
  *
  */
-public class HttpRequest implements Request {
+public class HttpServerRequest implements Request {
 
 	private String requestLine;
 	private HttpVerb method;
@@ -75,7 +75,7 @@ public class HttpRequest implements Request {
 	/** Regex to split cookie header following RFC6265 Section 5.4 */
 	public static final Pattern COOKIE_SEPARATOR_PATTERN = Pattern.compile(";");
 
-	public HttpRequest() {
+	public HttpServerRequest() {
 		headers = new HashMap<String, String>();
 		pathParams = new HashMap<>();
 	}
@@ -86,7 +86,7 @@ public class HttpRequest implements Request {
 	 * @param requestLine The Http request text line
 	 * @param headers     The Http request headers
 	 */
-	public HttpRequest(String requestLine, Map<String, String> headers, String body) {
+	public HttpServerRequest(String requestLine, Map<String, String> headers, String body) {
 		this.requestLine = requestLine;
 		String[] elements = REQUEST_LINE_PATTERN.split(requestLine);
 		method = HttpVerb.valueOf(elements[0]);
