@@ -165,8 +165,7 @@ public class PlainIOHandler implements IOHandler {
 	public void handleWrite(SelectionKey key) throws IOException {
 		if (key.attachment() == null)
 			return;
-
-		boolean finished = false;
+		
 		SocketChannel client = (SocketChannel) key.channel();
 		try {
 			if (key.attachment() instanceof Response) {
@@ -175,21 +174,9 @@ public class PlainIOHandler implements IOHandler {
 
 				IOSocketHelper.writeBuffer(writeBuffer, client);
 				if (!writeBuffer.hasRemaining()) {
-					if (!(finished = response.getFile() == null)) {
-						FileChannel channel = (FileChannel) response.getFile();
-						long bytesWritten = channel.transferTo(channel.position(), channel.size(), client);
-						if (!(finished = bytesWritten < channel.size())) {
-							channel.position(channel.position() + bytesWritten);
-						} else {
-							channel.close();
-						}
-					}
-				}
-				if (finished) {
-					// connector.closeOrRegisterForRead(key, response.isKeepAlive());
 					this.finishRequest(key);
 				}
-			}
+		}
 
 		} catch (IOException ex) {
 			Log.error(TAG, "Error writing on channel: " + ex.getMessage());

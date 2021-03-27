@@ -78,9 +78,7 @@ public interface Response {
 
 	public void prepare();
 
-	public DynamicByteBuffer getResponseData();
-
-	public FileChannel getFile();
+	public DynamicByteBuffer getResponseData();	
 
 	public boolean isKeepAlive();
 

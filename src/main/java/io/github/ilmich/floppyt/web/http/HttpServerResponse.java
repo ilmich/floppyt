@@ -228,11 +228,6 @@ public class HttpServerResponse implements Response {
 		return 0;
 	}
 
-	@Override
-	public FileChannel getFile() {
-		return file;
-	}
-
 	/*
 	 * Reset response
 	 * 
