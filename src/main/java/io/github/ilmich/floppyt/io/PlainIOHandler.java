@@ -46,10 +46,6 @@ import io.github.ilmich.floppyt.web.http.Response;
 public class PlainIOHandler implements IOHandler {
 	
 	private static final String TAG = "PlainIOHandler";
-
-	public static ThreadPoolExecutor executor = new ThreadPoolExecutor(HttpServerDescriptor.MIN_THREADS_PROCESSOR,
-			HttpServerDescriptor.MAX_THREADS_PROCESSOR, HttpServerDescriptor.KEEP_ALIVE_TIMEOUT, TimeUnit.SECONDS,
-			new SynchronousQueue<Runnable>());
 	
 	private ServerConnector connector = null;
 
@@ -58,10 +54,6 @@ public class PlainIOHandler implements IOHandler {
 	public PlainIOHandler(Protocol protocol) {
 		super();
 		this.protocol = protocol;	
-	}
-
-	public void setExecutor(ThreadPoolExecutor exec) {
-		executor = exec;
 	}
 
 	@Override
@@ -113,7 +105,7 @@ public class PlainIOHandler implements IOHandler {
 				
 				final CompletableFuture<Response> future = new CompletableFuture<Response>();
 
-				executor.submit(new Runnable() {
+				ServerConnector.executor.submit(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -166,6 +158,7 @@ public class PlainIOHandler implements IOHandler {
 		if (key.attachment() == null)
 			return;
 		
+		boolean finished = false;
 		SocketChannel client = (SocketChannel) key.channel();
 		try {
 			if (key.attachment() instanceof Response) {
@@ -174,6 +167,17 @@ public class PlainIOHandler implements IOHandler {
 
 				IOSocketHelper.writeBuffer(writeBuffer, client);
 				if (!writeBuffer.hasRemaining()) {
+					if (!(finished = response.getFile() == null)) {
+							FileChannel channel = (FileChannel) response.getFile();
+							long bytesWritten = channel.transferTo(channel.position(), channel.size(), client);
+							if (!(finished = bytesWritten < channel.size())) {
+									channel.position(channel.position() + bytesWritten);
+							} else {
+								channel.close();
+							}
+					}
+				}
+				if (finished) {
 					this.finishRequest(key);
 				}
 		}

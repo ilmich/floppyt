@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLEngine;
+
 import io.github.ilmich.floppyt.util.Closeables;
 import io.github.ilmich.floppyt.util.CookieUtil;
 import io.github.ilmich.floppyt.util.DateUtil;
@@ -55,6 +57,7 @@ public class HttpServerResponse implements Response {
 	private Charset mainCharset = Charset.forName("ASCII");
 
 	private boolean createETag;
+	private SSLEngine sslEngine;
 
 	@Override
 	public DynamicByteBuffer getResponseData() {
@@ -227,6 +230,11 @@ public class HttpServerResponse implements Response {
 
 		return 0;
 	}
+	
+	@Override
+	public FileChannel getFile() {
+		return file;
+	}
 
 	/*
 	 * Reset response
@@ -250,5 +258,16 @@ public class HttpServerResponse implements Response {
 	public long finish() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public SSLEngine getSSLEngine() {		
+		return this.sslEngine;
+	}
+
+	@Override
+	public void setSSLEngine(SSLEngine engine) {
+		this.sslEngine = engine;
+		
 	}
 }

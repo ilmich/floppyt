@@ -32,6 +32,9 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import io.github.ilmich.floppyt.io.IOHandler;
 import io.github.ilmich.floppyt.io.callback.JMXCallbackManager;
@@ -52,6 +55,10 @@ public class ServerConnector extends Thread {
 	public static final JMXTimeoutManager tm = new JMXTimeoutManager();
 	private IOHandler ioHandler;
 	private boolean isRunning = false;
+	
+	public static ThreadPoolExecutor executor = new ThreadPoolExecutor(HttpServerDescriptor.MIN_THREADS_PROCESSOR,
+			HttpServerDescriptor.MAX_THREADS_PROCESSOR, HttpServerDescriptor.KEEP_ALIVE_TIMEOUT, TimeUnit.SECONDS,
+			new SynchronousQueue<Runnable>());
 
 	public ServerConnector(IOHandler ioHandler) {
 		super();

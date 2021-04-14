@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import io.github.ilmich.floppyt.io.PlainIOHandler;
+import io.github.ilmich.floppyt.io.SSLIOHandler;
 import io.github.ilmich.floppyt.io.connectors.ServerConnector;
 
 public class HttpServer {

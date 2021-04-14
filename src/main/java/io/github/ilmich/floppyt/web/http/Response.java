@@ -26,6 +26,8 @@ package io.github.ilmich.floppyt.web.http;
 import java.io.File;
 import java.nio.channels.FileChannel;
 
+import javax.net.ssl.SSLEngine;
+
 import io.github.ilmich.floppyt.util.DynamicByteBuffer;
 import io.github.ilmich.floppyt.web.http.protocol.HttpStatus;
 
@@ -55,6 +57,8 @@ public interface Response {
 	 * Experimental support.
 	 */
 	long write(File file);
+	
+	public FileChannel getFile();
 
 	/**
 	 * Explicit flush.
@@ -99,5 +103,9 @@ public interface Response {
 	public void setCookie(String name, String value, long expiration, String domain, String path);
 
 	public void clearCookie(String name);
+	
+	public SSLEngine getSSLEngine();
+	
+	public void setSSLEngine(SSLEngine engine);
 
 }
